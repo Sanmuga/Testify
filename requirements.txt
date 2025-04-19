@@ -1,0 +1,9 @@
+Flask
+google-generativeai
+Pillow
+selenium
+xlsxwriter
+pandas
+openpyxl
+requests
+Werkzeug
