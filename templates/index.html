@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testify - AI TestCrafter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* Gradient background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 900px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        p {
+            color: #555;
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        /* Form Styles */
+        .input-group {
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left; /* Align labels and inputs to the left */
+        }
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #34495e;
+            display: block;
+            font-size: 1.05rem;
+        }
+        input[type="file"], input[type="text"] {
+            padding: 14px;
+            border: 2px solid #bdc3c7; /* Lighter border color */
+            border-radius: 8px;
+            width: 100%;
+            font-size: 1.1rem;
+            transition: border-color 0.2s ease-in-out;
+            background-color: #f8f9fa; /* Light background for inputs */
+        }
+        input[type="file"]:focus, input[type="text"]:focus {
+            border-color: #3498db; /* Focus state - a nice blue */
+            outline: none;
+        }
+        button {
+            background-color: #3498db;  /* Button color */
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 30px; /* Rounded corners */
+            cursor: pointer;
+            font-size: 1.15rem;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+        }
+        button:hover {
+            background-color: #2980b9; /* Darker shade on hover */
+            transform: translateY(-2px); /* Slightly lift the button on hover */
+        }
+        .radio-group {
+            display: flex;
+            justify-content: center;  /* Center the radio buttons */
+            gap: 30px; /* Increased gap */
+            margin-bottom: 25px;
+        }
+        .radio-group label {
+            margin-bottom: 0;
+            color: #34495e;
+            font-size: 1.05rem;
+            cursor: pointer; /* Indicate clickable */
+        }
+        .radio-group input[type="radio"] {
+            margin-right: 8px;
+            cursor: pointer; /* Indicate clickable */
+        }
+
+        /* Error and Success Messages */
+        .error-message {
+            color: #e74c3c; /* Error color - a brighter red */
+            margin-top: 20px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            text-align: center;
+        }
+        .success-message {
+            color: #2ecc71; /* Success color - a brighter green */
+            margin-top: 20px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            text-align: center;
+        }
+
+        /* Download Button */
+        .download-button {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .download-button a {
+            text-decoration: none;
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto; /* For horizontal scrolling on small screens */
+            margin-top: 30px;
+            width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1; /* Light border color */
+            font-size: 1.05rem;
+            color: #333;
+        }
+        th {
+            background-color: #3498db; /* Header background color - the same as the button */
+            font-weight: 600;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;  /* Even row color */
+        }
+        .table-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        /* Loading Spinner */
+        .loading-spinner {
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #3498db; /* Spinner color */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Media Queries for Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 25px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .table-title {
+                font-size: 1.3rem;
+            }
+            th, td {
+                padding: 10px;
+                font-size: 1rem;
+            }
+            button, input[type="file"], input[type="text"] {
+                font-size: 1.05rem;
+                padding: 10px 18px;
+            }
+            .radio-group {
+                flex-direction: column; /* Stack radio buttons on smaller screens */
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Testify: AI TestCrafter</h1>
+        <p>Upload a ZIP file of webpage screenshots or enter a URL to extract UI elements and generate test cases.</p>
+
+        {% if error_message %}
+            <p class="error-message">{{ error_message }}</p>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="input_method" value="zip_upload" checked>
+                    Upload ZIP File
+                </label>
+                <label>
+                    <input type="radio" name="input_method" value="url_input">
+                    Enter Webpage URL
+                </label>
+            </div>
+
+            <div class="input-group" id="zip_upload_group">
+                <label for="zip_file">Upload Screenshot ZIP File:</label>
+                <input type="file" id="zip_file" name="zip_file">
+            </div>
+
+            <div class="input-group" id="url_input_group" style="display: none;">
+                <label for="url">Enter Website URL (e.g., https://example.com):</label>
+                <input type="text" id="url" name="url">
+            </div>
+
+            <button type="submit" id="generateButton">
+                {% if processing %}
+                    <i class="fas fa-spinner fa-spin"></i>  Generating...
+                {% else %}
+                    Generate Test Cases
+                {% endif %}
+            </button>
+        </form>
+
+        {% if processing %}
+            <div class="loading-spinner"></div>
+        {% endif %}
+
+        {% if all_dfs %}
+            <div class="success-message">Test cases generated successfully!</div>
+            {% for filename, df in all_dfs.items() %}
+                <h2 class="table-title">Test Cases for: {{ filename }}</h2>  <!-- Display filename as title -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Priority</th>
+                                <th>Scenario</th>
+                                <th>Test Case</th>
+                                <th>Expected Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for index, row in df.iterrows() %}
+                                <tr>
+                                    <td>{{ row['Priority'] }}</td>
+                                    <td>{{ row['Scenario'] }}</td>
+                                    <td>{{ row['Test Case'] }}</td>
+                                    <td>{{ row['Expected Result'] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+
+            {% if excel_file_path %}
+                <div class="download-button">
+                    <a href="/download/{{ excel_file_path }}" download="UI_Test_Cases_Generated.xlsx">
+                        <button>Download All Test Cases (Excel)</button>
+                    </a>
+                </div>
+            {% endif %}
+
+        {% endif %}
+    </div>
+
+    <script>
+        // JavaScript to show/hide input based on radio selection
+        const zipUploadGroup = document.getElementById('zip_upload_group');
+        const urlInputGroup = document.getElementById('url_input_group');
+        const radioButtons = document.querySelectorAll('input[name="input_method"]');
+        const generateButton = document.getElementById('generateButton');
+
+        function showInputGroup() {
+            if (document.querySelector('input[name="input_method"]:checked').value === 'zip_upload') {
+                zipUploadGroup.style.display = 'flex';
+                urlInputGroup.style.display = 'none';
+            } else {
+                zipUploadGroup.style.display = 'none';
+                urlInputGroup.style.display = 'flex';
+            }
+        }
+
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', showInputGroup);
+        });
+
+        // Disable button while processing
+        /* Removed as it's now handled by the processing flag in Flask */
+
+        // Initial setup
+        showInputGroup();
+    </script>
+</body>
+</html>
