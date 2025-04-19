@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testify - Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Blue Elegance Styling */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap'); /* Modern Font */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb); /* Soft blue gradient */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #1a237e; /* Dark Blue text color */
+            overflow: hidden;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.97);  /* Almost opaque white */
+            padding: 60px;
+            border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            width: 85%;
+            max-width: 950px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Background elements */
+        .background-elements {
+            position: absolute;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            z-index: -1;
+            opacity: 0.3;
+            background: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%231a237e' d='M40 40C40 17.9086 57.9086 0 80 0C102.091 0 120 17.9086 120 40C120 62.0914 102.091 80 80 80C57.9086 80 40 62.0914 40 40ZM160 160C160 137.909 142.091 120 120 120C97.9086 120 80 137.909 80 160C80 182.091 97.9086 200 120 200C142.091 200 160 182.091 160 160ZM0 160C0 137.909 17.9086 120 40 120C62.0914 120 80 137.909 80 160C80 182.091 62.0914 200 40 200C17.9086 200 0 182.091 0 160ZM0 40C0 17.9086 17.9086 0 40 0C62.0914 0 80 17.9086 80 40C80 62.0914 62.0914 80 40 80C17.9086 80 0 62.0914 0 40ZM120 40C120 17.9086 137.909 0 160 0C182.091 0 200 17.9086 200 40C200 62.0914 182.091 80 160 80C137.909 80 120 62.0914 120 40ZM160 160C160 137.909 182.091 120 200 120C200 142.091 182.091 160 160 160C182.091 160 200 142.091 200 120C200 97.9086 182.091 80 160 80C137.909 80 120 97.9086 120 120ZM40 120C17.9086 120 0 137.909 0 160C0 182.091 17.9086 200 40 200C62.0914 200 80 182.091 80 160C80 137.909 62.0914 120 40 120Z'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+            background-position: center;
+            opacity: 0.3;
+        }
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 5px; /* Reduced margin */
+            color: #1a237e; /* Dark blue for heading */
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 1s ease-in-out;
+        }
+        .tagline {
+            font-size: 1.4rem;
+            font-style: italic;
+            color: #3f51b5; /* Lighter Blue for Tagline */
+            margin-bottom: 30px;
+            animation: slideIn 1s ease-in-out;
+        }
+        p {
+            font-size: 1.15rem;
+            line-height: 1.9;
+            color: #3f51b5;
+            margin-bottom: 30px;
+            animation: slideIn 1s ease-in-out;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeInUp 1s ease-in-out;
+        }
+        .test-cases-button {
+            background-color: #3f51b5; /*  Primary Blue Button */
+            color: #fff;
+            padding: 18px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            display: inline-block;
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .test-cases-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%);
+            transform: rotate(45deg);
+            pointer-events: none;
+            transition: transform 0.5s ease;
+        }
+        .test-cases-button:hover::before {
+            transform: translateX(calc(100% + 200px));
+        }
+        .test-cases-button:hover {
+            background-color: #283593; /* Darker Blue on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+        }
+        .test-cases-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+        }
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 40px;
+            }
+            h1 {
+                font-size: 2.8rem;
+            }
+            .tagline {
+                font-size: 1.1rem;
+            }
+            p {
+                font-size: 1.05rem;
+            }
+            .test-cases-button {
+                font-size: 1.2rem;
+                padding: 16px 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-elements"></div>
+    <div class="container">
+        <h1>Testify</h1>
+        <p class="tagline">AI TestCrafter</p>
+        <p>Craft elegant and efficient test cases for your web applications.  Experience the art of automated testing, reimagined.</p>
+
+        <div class="button-container">
+            <a href="{{ url_for('index') }}" class="test-cases-button">
+                Generate Test Cases
+            </a>
+        </div>
+    </div>
+</body>
+</html>
