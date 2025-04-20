@@ -12,7 +12,7 @@ from selenium.webdriver.chrome.options import Options
 from werkzeug.utils import secure_filename
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-import xlsxwriter
+import xlsxwriter #Import xlsxwriter
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -169,6 +169,7 @@ def extract_ui_elements(image_path, model):
 
 def process_zip_file(zip_file):
     all_dfs = {}
+    error_message = None # Add error message variable
     with tempfile.TemporaryDirectory() as temp_dir:
         zip_path = os.path.join(temp_dir, "uploaded.zip")
         zip_file.save(zip_path) #save the uploaded file
@@ -182,10 +183,12 @@ def process_zip_file(zip_file):
                     if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff'))
                 ]
         except zipfile.BadZipFile:
-            return None, "Invalid ZIP file."  # Return error message if the zip file is corrupt
+            error_message = "Invalid ZIP file."
+            return None, None, error_message  # Return error message if the zip file is corrupt
 
         if not image_files:
-            return None, "No images found in the ZIP file."
+            error_message = "No images found in the ZIP file."
+            return None, None, error_message
 
         for img_path in image_files:
             img_name = os.path.basename(img_path)
@@ -205,16 +208,28 @@ def process_zip_file(zip_file):
         if all_dfs:
             output_excel = os.path.join(temp_dir, "Generated_UI_Test_Cases.xlsx")
             try:
-                with pd.ExcelWriter(output_excel, engine='xlsxwriter') as writer:
+                # Use xlsxwriter for better excel file creation
+                with xlsxwriter.Workbook(output_excel) as workbook:
                     for name, df in all_dfs.items():
-                        sheet_name = os.path.splitext(name)[0][:31]
-                        df.to_excel(writer, index=False, sheet_name=sheet_name)
+                        sheet_name = os.path.splitext(name)[0][:31]  # Ensure sheet name is within 31 characters
+                        worksheet = workbook.add_worksheet(sheet_name)
+
+                        # Write headers
+                        for col_num, header in enumerate(df.columns):
+                            worksheet.write(0, col_num, header)
+
+                        # Write data
+                        for row_num, row_data in enumerate(df.values):
+                            for col_num, cell_data in enumerate(row_data):
+                                worksheet.write(row_num + 1, col_num, str(cell_data)) # Convert to string to avoid errors
             except Exception as e:
                 print(f"Error writing to Excel: {e}") # Log the excel writing error
-                return None, "Error generating Excel file."  #handle Excel writer error
+                error_message = "Error generating Excel file."
+                return None, None, error_message  #handle Excel writer error
             return output_excel, all_dfs, None #Return excel path, dfs and no error
         else:
-            return None, None, "No test cases generated for any images." #handle cases where no test cases generated.
+            error_message = "No test cases generated for any images."
+            return None, None, error_message #handle cases where no test cases generated.
 def process_url(url):
     ui_description = extract_elements_from_url(url)
     if not ui_description:
@@ -227,7 +242,19 @@ def process_url(url):
 
     output_path = os.path.join(tempfile.gettempdir(), "test_cases.xlsx")
     try:
-        df.to_excel(output_path, index=False)
+        # Use xlsxwriter for better excel file creation
+        with xlsxwriter.Workbook(output_path) as workbook:
+            worksheet = workbook.add_worksheet('Test_Cases')
+
+            # Write headers
+            for col_num, header in enumerate(df.columns):
+                worksheet.write(0, col_num, header)
+
+            # Write data
+            for row_num, row_data in enumerate(df.values):
+                for col_num, cell_data in enumerate(row_data):
+                    worksheet.write(row_num + 1, col_num, str(cell_data)) # Convert to string to avoid errors
+
     except Exception as e:
         print(f"Error writing to Excel: {e}")  # Log the excel writing error
         return None, None, "Error generating Excel file."
@@ -282,5 +309,5 @@ def download_file(filename):
         return "Error during download", 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Use Render's port or default to 5000
+    port = int(os.environ.get('PORT', 5000))  
     app.run(host='0.0.0.0', port=port, debug=True) 
