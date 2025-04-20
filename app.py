@@ -10,6 +10,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from werkzeug.utils import secure_filename
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+import xlsxwriter
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -31,7 +34,13 @@ def extract_elements_from_url(url):
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--window-size=1920,1080")
-    driver = webdriver.Chrome(options=chrome_options)
+    # Use ChromeDriverManager to manage the ChromeDriver
+    try:
+      service = Service(executable_path=ChromeDriverManager().install())
+      driver = webdriver.Chrome(service=service, options=chrome_options)
+    except Exception as e:
+      print(f"Error initializing Chrome driver: {e}")
+      return None
 
     try:
         driver.get(url)
@@ -273,6 +282,4 @@ def download_file(filename):
         return "Error during download", 500
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Use Render's port or default to 5000
-    app.run(host='0.0.0.0', port=port, debug=True)  #
-    
+    app.run(debug=True)
