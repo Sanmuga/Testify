@@ -230,35 +230,36 @@ def process_zip_file(zip_file):
         else:
             error_message = "No test cases generated for any images."
             return None, None, error_message #handle cases where no test cases generated.
+        
+        
 def process_url(url):
+    """Processes a URL, extracts UI elements, generates test cases, and saves them to an Excel file."""
     ui_description = extract_elements_from_url(url)
     if not ui_description:
         return None, None, "Failed to extract UI elements from URL."
 
-    test_case_output = generate_test_cases(ui_description, google_model)
+    test_case_output = generate_test_cases(ui_description, google_model)  # Use google_model here
+    if not test_case_output:
+        return None, None, "Failed to generate test cases."
+
     df = parse_table_to_dataframe(test_case_output)
     if df.empty:
-        return None, None, "No test cases generated."
+        return None, None, "Generated test cases are empty."
 
-    output_path = os.path.join(tempfile.gettempdir(), "test_cases.xlsx")
     try:
-        # Use xlsxwriter for better excel file creation
+        temp_dir = tempfile.mkdtemp()
+        output_path = os.path.join(temp_dir, "Generated_UI_Test_Cases_URL.xlsx")
         with xlsxwriter.Workbook(output_path) as workbook:
-            worksheet = workbook.add_worksheet('Test_Cases')
-
-            # Write headers
+            worksheet = workbook.add_worksheet("TestCases")
             for col_num, header in enumerate(df.columns):
                 worksheet.write(0, col_num, header)
-
-            # Write data
             for row_num, row_data in enumerate(df.values):
                 for col_num, cell_data in enumerate(row_data):
-                    worksheet.write(row_num + 1, col_num, str(cell_data)) # Convert to string to avoid errors
-
+                    worksheet.write(row_num + 1, col_num, str(cell_data))
+        return output_path, df, None
     except Exception as e:
-        print(f"Error writing to Excel: {e}")  # Log the excel writing error
-        return None, None, "Error generating Excel file."
-    return output_path, df, None #Return excel path, dataframe and no error
+        print(f"Excel writing error: {e}")
+        return None, None, "Error writing test cases to Excel."
 
 
 @app.route('/', methods=['GET'])
@@ -307,7 +308,8 @@ def download_file(filename):
     except Exception as e:
         print(f"Error during download: {e}")  # Log the error
         return "Error during download", 500
-
+    
+    
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))  
     app.run(host='0.0.0.0', port=port, debug=True) 
